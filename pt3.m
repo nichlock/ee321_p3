@@ -1,10 +1,10 @@
 clear; clc; close all;
+plot_reducer = 1;
 
 %% Compute x(t)
 dt = 0.01;
 t = 0.001:dt:4;
-size_t = size(t);
-num_samples = size_t(2);
+num_samples = size(t, 2);
 x = 1 * ((t <= 1) | ((t >= 3) & (t <= 4)));
 
 T = 4;
@@ -13,7 +13,7 @@ w_0 = 2.*pi ./ T;
 
 executions = 101;
 
-mse =  zeros(1, executions);
+mserror =  zeros(1, executions);
 %% Compute DFT Error For N from 1 to executions
 
 % Compute Fourier Series (xhat)
@@ -36,24 +36,24 @@ for N = 1:executions
     end
     
     % Combine all frequencies
-    xhat = zeros(size_t);
+    xhat = zeros(1, num_samples);
     for time = 1:num_samples
         xhat(time) = real(sum(xhat_freq_components(time, :)));
     end
     
     % Check error
-    mse(N) = mean((x - xhat).^2);
+    mserror(N) = mean((x - xhat).^2);
     
-    % Plot every ten operations
-    if(mod(N-1, 10) == 0)
+    % Plot every couple of operations
+    if(N <= 5 || N ==  1 * plot_reducer || N ==  3 * plot_reducer)
         plot_xk_and_xhat(t, xhat, N, X_k)
+        if(N ==  3 * plot_reducer)
+            plot_reducer = plot_reducer * 10;
+        end
     end
-    
+
 end
 
-figure
-plot(t, x, 'LineWidth', 5)
-figure
-plot(1:executions, mse, '.', 'MarkerSize', 20)
+plot_x_and_mse(t, x, N, mserror)
 
-fprintf("Min error = %3.2f%%\n", min(mse) * 100);
+fprintf("Min error = %3.2f%%\n", min(mserror) * 100);

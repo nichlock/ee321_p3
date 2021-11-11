@@ -1,10 +1,10 @@
 clear; clc; close all;
+plot_reducer = 1;
 
 %% Compute x(t)
 dt = 0.01;
 t = .001:dt:4;
-size_t = size(t);
-num_samples = size_t(2);
+num_samples = size(t, 2);
 x = 1 + (.25 * cos(2*pi*.25*t) + (.5 * sin(2*pi*.25*2*t)));
 
 T = 4;
@@ -13,7 +13,7 @@ w_0 = 2.*pi ./ T;
 
 executions = 4;
 
-mse =  zeros(1, executions);
+mserror =  zeros(1, executions);
 %% Compute DFT Error For N from 1 to executions
 
 % Compute Fourier Series (xhat)
@@ -45,24 +45,18 @@ for N = 1:executions
     end
     
     % Combine all frequencies
-    xhat = zeros(size_t);
+    xhat = zeros(1, num_samples);
     for time = 1:num_samples
         xhat(time) = (sum(xhat_freq_components(time, (N+1):(N * 2+1))));
     end
     
     % Check error
-    mse(N) = mean((x - real(xhat)).^2);
-    
-    
+    mserror(N) = mean((x - real(xhat)).^2);
+
     plot_xk_and_xhat(t, xhat, N, X_k)
     
 end
 
-figure
-plot(t, x, 'LineWidth', 5)
-figure
-plot(-executions:executions, abs(X_k), 'LineWidth', 5)
-figure
-plot(1:executions, abs(mse), '.', 'MarkerSize', 20)
+plot_x_and_mse(t, x, executions, mserror)
 
-fprintf("Min error = %3.2f%%\n", min(mse) * 100);
+fprintf("Min error = %3.2f%%\n", min(mserror) * 100);
