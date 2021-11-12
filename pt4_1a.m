@@ -39,9 +39,7 @@ for N = 1:executions
         end
  
         % Reconstructed value in broken up frequencies
-        for time = 1:num_samples
-            xhat_freq_components(time, k_indx) = (X_k(k_indx) .* (exp(1) .^ (1j .* k .* w_0 .* t(time))));
-        end
+        xhat_freq_components(:, k_indx) = (X_k(k_indx) .* (exp(1) .^ (1j .* k .* w_0 .* t)));
     end
     
     % Combine all frequencies

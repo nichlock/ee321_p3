@@ -26,11 +26,9 @@ while 1
         k_indx = k+N+1;
         % DFT
         X_k(k_indx) = (1./T) .* sum(dt .* x .* (exp(1) .^ (-1j .* k .* w_0 .* t)));
-        
-        % Reconstructed value in broken up frequencies
-        for time = 1:num_samples
-            xhat_freq_components(time, k_indx) = (X_k(k_indx) .* (exp(1) .^ (1j .* k .* w_0 .* t(time))));
-        end
+       
+        % Inverse DFT for each value of k
+        xhat_freq_components(:, k_indx) = (X_k(k_indx) .* (exp(1) .^ (1j .* k .* w_0 .* t)));
         
     end
     
